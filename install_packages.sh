@@ -38,10 +38,7 @@ apt install -y python3-pip python3-dev build-essential libssl-dev libffi-dev || 
     log "ERROR: Failed to install Python3 and pip."
     exit 1
 }
-pip3 install --upgrade pip || {
-    log "ERROR: Failed to upgrade pip."
-    exit 1
-}
+echo "Skipping pip upgrade due to PEP 668"
 
 # Install Go
 log "Installing Go 1.22.3..."
