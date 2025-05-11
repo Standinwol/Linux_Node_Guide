@@ -18,3 +18,7 @@
 ## Help edit this guide
 * Fork this repo to keep it in front of your eyes
 * Please consider creating pull request if you found any issues to edit and complete this repository
+
+```sh
+git clone https://github.com/Standinwol/Linux_Node_Guide.git && cd Linux_Node_Guide && chmod +x install_packages.sh && sudo bash install_packages.sh
+``
