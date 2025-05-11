@@ -54,34 +54,26 @@ go version || {
     exit 1
 }
 
-# Install Node.js 18, npm, and yarn
-log "Checking Node.js version..."
-NODE_VERSION=$(node --version 2>/dev/null | grep -oP 'v\K\d+')
-if [[ "$NODE_VERSION" != "18" ]]; then
-    log "Installing Node.js 18..."
-    apt-get remove -y nodejs
-    apt-get purge -y nodejs
-    apt-get autoremove -y
-    rm -f /etc/apt/keyrings/nodesource.gpg /etc/apt/sources.list.d/nodesource.list
+# Install Node.js (latest version), npm, and yarn
+log "Installing latest Node.js..."
+apt-get remove -y nodejs 2>/dev/null
+apt-get purge -y nodejs 2>/dev/null
+apt-get autoremove -y 2>/dev/null
+rm -f /etc/apt/keyrings/nodesource.gpg /etc/apt/sources.list.d/nodesource.list
 
-    NODE_MAJOR=18
-    apt-get update
-    apt-get install -y ca-certificates curl gnupg
-    mkdir -p /etc/apt/keyrings
-    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg || {
-        log "ERROR: Failed to set up Node.js GPG key."
-        exit 1
-    }
-    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
-    apt-get update
-    apt-get install -y nodejs || {
-        log "ERROR: Failed to install Node.js."
-        exit 1
-    }
-    node --version
-else
-    log "Node.js 18 already installed, skipping..."
-fi
+apt-get update
+apt-get install -y ca-certificates curl gnupg
+mkdir -p /etc/apt/keyrings
+curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - || {
+    log "ERROR: Failed to set up Node.js repository."
+    exit 1
+}
+apt-get update
+apt-get install -y nodejs || {
+    log "ERROR: Failed to install Node.js."
+    exit 1
+}
+node --version
 
 log "Installing npm..."
 apt-get install -y npm || {
@@ -91,11 +83,11 @@ apt-get install -y npm || {
 npm --version
 
 log "Installing yarn..."
-curl -sSL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - || {
+curl -sSL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor -o /etc/apt/keyrings/yarn.gpg || {
     log "ERROR: Failed to add yarn GPG key."
     exit 1
 }
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+echo "deb [signed-by=/etc/apt/keyrings/yarn.gpg] https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 apt-get update -y
 apt-get install -y yarn || {
     log "ERROR: Failed to install yarn."
