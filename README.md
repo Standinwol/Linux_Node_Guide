@@ -21,4 +21,4 @@
 
 ```sh
 git clone https://github.com/Standinwol/Linux_Node_Guide.git && cd Linux_Node_Guide && chmod +x install_packages.sh && sudo bash install_packages.sh
-``
+
